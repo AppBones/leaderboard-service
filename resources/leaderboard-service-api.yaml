@@ -1,0 +1,347 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Leaderboards
+  license:
+    name: GPLv3
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  description: |
+    **The Leaderboard service specification for AppBone**
+
+    You can try all HTTP operation described in this Swagger spec.
+
+    Find source code of this API [here](https://github.com/appbones/leaderboard-service)
+host: appbone.herokuapp.com
+basePath: /api/v1/leaderboards
+schemes:
+  - http #FIXME Make https for production
+consumes:
+  - application/json
+  - application/xml
+  - application/clojure;q=0.9
+  - text/xml
+  - text/json
+  - text/hal+json
+produces:
+  - application/hal+json
+  - application/json
+  - application/xml
+  - application/clojure;q=0.9
+  - text/json
+  - text/hal+json
+  - text/xml
+  - text/html
+  - text/plain
+
+paths:
+  /:
+    get:
+      summary: Lists all leaderboards.
+      description: ""
+      operationId: leaderboard_service.leaderboard/list-leaderboards
+      tags:
+        - leaderboards
+      parameters:
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/pageParam'
+      responses:
+        200:
+          description: Leaderboards listed.
+          schema:
+            title: Leaderboards
+            type: array
+            items:
+              $ref: '#/definitions/Leaderboard'
+
+    post:
+      summary: Adds a new leaderboard.
+      description: ""
+      operationId: leaderboard_service.leaderboard/create-leaderboard
+      tags:
+        - leaderboards
+      parameters:
+        - name: leaderboard
+          in: body
+          description: The leaderboard configuration you want to post
+          schema:
+            $ref: '#/definitions/Leaderboard'
+          required: true
+      responses:
+        201:
+          description: Leaderboard created.
+
+    options:
+      summary: Lists all valid HTTP verbs for this path.
+      description: ""
+      operationId: leaderboard_service.leaderboard/list-options
+      tags:
+        - meta
+      responses:
+        200:
+          headers:
+            Allow:
+              type: string
+          description: Description returned.
+
+  /{board_id}:
+    get:
+      summary: Sends the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.leaderboard/fetch-leaderboard
+      tags:
+        - leaderboards
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+      responses:
+        200:
+          description: Leaderboard sent.
+          schema:
+            title: Leaderboard
+            type: object
+            items:
+              $ref: '#/definitions/Leaderboard'
+
+    patch:
+      summary: Updates the leaderboard identified by boardIdParam with the new configuration.
+      description: ""
+      operationId: leaderboard_service.leaderboard/update-leaderboard
+      tags:
+        - leaderboards
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+        - name: leaderboard
+          in: body
+          description: The leaderboard configuration you want to amend
+          schema:
+            $ref: '#/definitions/Leaderboard'
+          required: true
+      responses:
+        204:
+          description: Leaderboard updated.
+
+    delete:
+      summary: Deletes the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.leaderboard/delete-leaderboard
+      tags:
+        - leaderboards
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+      responses:
+        202:
+          description: Leaderboard queued for deletion.
+
+    options:
+      summary: Lists all valid HTTP verbs for this path.
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+      operationId: leaderboard_service.leaderboard/list-options-board
+      tags:
+        - meta
+      responses:
+        200:
+          headers:
+            Allow:
+              type: string
+          description: Description returned.
+
+  /{board_id}/items:
+    get:
+      summary: Sends the scores belonging to the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.score/fetch-scores
+      tags:
+        - scores
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+        - $ref: '#/parameters/limitParam'
+        - $ref: '#/parameters/pageParam'
+        - name: unique
+          in: query
+          description: If true, only returns the best score from each User
+          type: boolean
+      responses:
+        200:
+          description: Scores sent.
+          schema:
+            title: Scores
+            type: array
+            items:
+              $ref: '#/definitions/Score'
+
+    post:
+      summary: Adds a score to the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.score/create-score
+      tags:
+        - scores
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+        - name: score
+          in: body
+          description: The score you want to post to the leaderboard
+          schema:
+            $ref: '#/definitions/Score'
+          required: true
+      responses:
+        201:
+          description: Score created.
+
+    delete:
+      summary: Deletes all scores in the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.score/delete-scores
+      tags:
+        - scores
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+      responses:
+        202:
+          description: All scores queued for deletion.
+
+    options:
+      summary: Lists all valid HTTP verbs for this path.
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+      operationId: leaderboard_service.score/list-options-scores
+      tags:
+        - meta
+      responses:
+        200:
+          headers:
+            Allow:
+              type: string
+          description: Description returned.
+
+  /{board_id}/items/{score_id}:
+    get:
+      summary: Send the score correlating to score_id from the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.score/fetch-score
+      tags:
+        - scores
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+        - $ref: '#/parameters/scoreIdParam'
+      responses:
+        200:
+          description: Score sent.
+          schema:
+            title: Score
+            type: array
+            items:
+              $ref: '#/definitions/Score'
+
+    delete:
+      summary: Delete the score correlating to score_id from the leaderboard identified by boardIdParam.
+      description: ""
+      operationId: leaderboard_service.score/delete-score
+      tags:
+        - scores
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+        - $ref: '#/parameters/scoreIdParam'
+      responses:
+        202:
+          description: Score queued for deletion.
+
+    options:
+      summary: Lists all valid HTTP verbs for this path.
+      parameters:
+        - $ref: '#/parameters/boardIdParam'
+        - $ref: '#/parameters/scoreIdParam'
+      operationId: leaderboard_service.score/list-options-score
+      tags:
+        - meta
+      responses:
+        200:
+          headers:
+            Allow:
+              type: string
+          description: Description returned.
+
+parameters:
+  boardIdParam:
+    name: board_id
+    in: path
+    type: string
+    description: ID of the leaderboard
+    required: true
+  limitParam:
+    name: limit
+    in: query
+    description: number of leaderboards to return
+    type: integer
+    default: 10
+    minimum: 1
+    maximum: 1000
+  pageParam:
+    name: page
+    in: query
+    description: page number of the results
+    type: integer
+    default: 1
+    minimum: 1
+  scoreIdParam:
+    name: score_id
+    in: path
+    description: the id of the score you want
+    type: string
+    required: true
+
+definitions:
+
+  Links:
+    type: object
+
+  Leaderboard:
+    type: object
+    required:
+       - ref_name
+       - title
+       - app_id
+    properties:
+      _links:
+       $ref: '#/definitions/Links'
+      ref_name:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      app_id:
+        type: string
+      score_type:
+        type: string
+        enum: [ "int", "lexical", "time" ]
+      sorting_order:
+        type: string
+        enum: [ "ascending", "descending" ]
+      min_score:
+        type: integer
+        format: int64
+      max_score:
+        type: integer
+        format: int64
+
+  Score:
+    type: object
+    required:
+      - user_id
+      - username
+      - score
+      - date
+    properties:
+      _links:
+        $ref: '#/definitions/Links'
+      score_id:
+        type: string
+      date:
+        type: string
+        format: date-time
+      user_id:
+        type: string
+      username:
+        type: string
+      score:
+        type: string
