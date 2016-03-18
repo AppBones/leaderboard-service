@@ -297,20 +297,22 @@ definitions:
   Leaderboard:
     type: object
     required:
-       - ref_name
+       - board_id
        - title
        - app_id
     properties:
       _links:
        $ref: '#/definitions/Links'
-      ref_name:
-        type: string
+      board_id:
+        type: integer
+        format: int64
       title:
         type: string
       description:
         type: string
       app_id:
-        type: string
+        type: integer
+        format: int64
       score_type:
         type: string
         enum: [ "int", "lexical", "time" ]
@@ -335,7 +337,8 @@ definitions:
       _links:
         $ref: '#/definitions/Links'
       score_id:
-        type: string
+        type: integer
+        format: int64
       date:
         type: string
         format: date-time

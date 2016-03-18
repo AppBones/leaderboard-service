@@ -2,7 +2,7 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [ring "1.4.0"]
                  [io.sarnowski/swagger1st "0.15.0"]
-                 [com.layerware/hugsql {{"0.4.4"}}]
+                 [com.layerware/hugsql "0.4.4"]
                  [org.postgresql/postgresql "9.4.1207"]
                  [environ "1.0.0"]]
 
