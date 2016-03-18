@@ -327,10 +327,10 @@ definitions:
   Score:
     type: object
     required:
-      - user_id
       - username
       - score
       - date
+      - board_id
     properties:
       _links:
         $ref: '#/definitions/Links'
@@ -339,9 +339,9 @@ definitions:
       date:
         type: string
         format: date-time
-      user_id:
-        type: string
       username:
         type: string
       score:
+        type: string
+      board_id:
         type: string
