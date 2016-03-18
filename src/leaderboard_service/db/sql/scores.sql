@@ -22,12 +22,11 @@ CREATE TABLE IF NOT EXISTS Scores (
 );
 
 
-
 -- ### DML ###
 
 -- :name delete-score :! :n
 -- :doc Deletes a score with a given id and returns the number of affected rows [0 to 1]
-DELETE FROM scores
+DELETE FROM Scores
 WHERE id = :id;
 
 
@@ -59,18 +58,26 @@ Gets a page containing all scores for a given board_id up to a specified limit.
 
 Examples:
 
-- (fetch-scores db/db {:board_id 1, :page 1, :limit 10})
+- (fetch-scores db/db {:board_id 1,
+                       :page 1,
+                       :limit 10})
 
-- (fetch-scores db/db {:board_id 1, :page 1, :limit 10,
-                     :unique true, :users ["User1" "User2"],
-                     :fromDate "2016-03-18 10:00:00+01", :toDate "2016-03-18 10:00:00+01"})
+- (fetch-scores db/db {:board_id 1,
+                       :page 1,
+                       :limit 10,
+                       :unique true,
+                       :users ["User1" "User2"],
+                       :sorting_asc true,
+                       :fromDate "2016-03-18 10:00:00+01",
+                       :toDate "2016-03-18 10:00:00+01"})
 
 Supported options:
 
-:unique   -- only one result for each username
-:fromDate -- scores from date with format: `yyyy-MM-dd HH:mm:ssZ`
-:toDate   -- scores up to and including date with format: `yyyy-MM-dd HH:mm:ssZ`
-:users    -- vector of users to get scores from
+:unique      -- only one result for each username
+:fromDate    -- scores from date with format: `yyyy-MM-dd HH:mm:ssZ`
+:toDate      -- scores up to and including date with format: `yyyy-MM-dd HH:mm:ssZ`
+:users       -- vector of users to get scores from
+:sorting_asc -- sort the scores ascending (except for descending)
 */
 SELECT scores_2.*
 FROM (SELECT
@@ -85,6 +92,7 @@ FROM (SELECT
             ORDER BY score DESC
            ) scores_1
      ) scores_2
-ORDER BY scores_2.score DESC, scores_2.username ASC
+ORDER BY --~ (if (true? (params :sorting_asc)) "scores_2.score ASC, " "scores_2.score DESC, ")
+  scores_2.username ASC
 OFFSET (:page - 1) * :limit
 LIMIT :limit;
