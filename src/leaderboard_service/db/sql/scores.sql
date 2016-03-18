@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS Scores (
   board_id   INT                   NOT NULL,
   score      INT                   NOT NULL,
   score_date TIMESTAMP             NOT NULL DEFAULT current_timestamp,
-  username   VARCHAR(320)          NOT NULL
+  username   VARCHAR(320)          NOT NULL,
+  FOREIGN KEY (board_id) REFERENCES Leaderboards (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
