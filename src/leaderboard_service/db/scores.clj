@@ -23,7 +23,7 @@
   (insert-score db/db {:board_id 1,
                        :score    1337,
                        :username "User3"})
-  (delete-score-by-id db/db {:id 7})
+  (delete-score db/db {:id 7})
   (fetch-scores db/db {:board_id 1,
                        :page     1,
                        :limit    10})
@@ -33,5 +33,5 @@
                        :toDate   "2016-12-24 24:00:00+01"
                        :page     1,
                        :limit    10
-                     :users    ["User1", "User2", "User3"]})
-)
+                       :users    ["User1", "User2", "User3"]})
+  )

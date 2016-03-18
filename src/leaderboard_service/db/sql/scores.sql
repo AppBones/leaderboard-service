@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS Scores (
 
 -- ### DML ###
 
--- :name delete-score-by-id :! :n
+-- :name delete-score :! :n
 -- :doc Deletes a score with a given id and returns the number of affected rows [0 to 1]
 DELETE FROM scores
 WHERE id = :id;
@@ -55,7 +55,7 @@ VALUES (:board_id,
 
 -- :name fetch-scores :?
 /* :doc
-Gets a page containing all users for a given board_id up to a specified limit.
+Gets a page containing all scores for a given board_id up to a specified limit.
 
 Examples:
 
