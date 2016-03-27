@@ -7,3 +7,8 @@
       (s1st/mapper)
       (s1st/parser)
       (s1st/executor)))
+
+
+(defn -main [& [port]]
+  (let [port (Integer. (or port (env :port) 3000))]
+    (jetty/run-jetty (site #'app) {:port port :join? false})))
