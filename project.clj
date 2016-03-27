@@ -5,6 +5,7 @@
                  [com.layerware/hugsql "0.4.4"]
                  [org.postgresql/postgresql "9.4.1207"]
                  [environ "1.0.0"]]
+  :min-lein-version "2.0.0"
   :profiles {:uberjar {:main leaderboard-service.core
                        :uberjar-name "leaderboard-service.jar"
                        :aot :all}}
