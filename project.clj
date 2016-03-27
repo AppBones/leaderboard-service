@@ -5,5 +5,8 @@
                  [com.layerware/hugsql "0.4.4"]
                  [org.postgresql/postgresql "9.4.1207"]
                  [environ "1.0.0"]]
+  :profiles {:uberjar {:main leaderboard-service.core
+                       :uberjar-name "leaderboard-service.jar"
+                       :aot :all}}
   :plugins [[lein-ring "0.9.6"]]
   :ring {:handler leaderboard_service.core/app})
