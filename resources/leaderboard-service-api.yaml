@@ -19,19 +19,12 @@ consumes:
   - application/json
   - application/xml
   - application/clojure;q=0.9
-  - text/xml
-  - text/json
-  - text/hal+json
 produces:
   - application/hal+json
   - application/json
+  - application/hal+xml
   - application/xml
   - application/clojure;q=0.9
-  - text/json
-  - text/hal+json
-  - text/xml
-  - text/html
-  - text/plain
 
 paths:
   /:
@@ -73,6 +66,8 @@ paths:
     options:
       summary: Lists all valid HTTP verbs for this path.
       description: ""
+      produces:
+        - application/json
       operationId: leaderboard_service.leaderboard/list-options
       tags:
         - meta
@@ -135,6 +130,8 @@ paths:
       summary: Lists all valid HTTP verbs for this path.
       parameters:
         - $ref: '#/parameters/boardIdParam'
+      produces:
+        - application/json
       operationId: leaderboard_service.leaderboard/list-options-board
       tags:
         - meta
@@ -203,6 +200,8 @@ paths:
       summary: Lists all valid HTTP verbs for this path.
       parameters:
         - $ref: '#/parameters/boardIdParam'
+      produces:
+        - application/json
       operationId: leaderboard_service.score/list-options-scores
       tags:
         - meta
@@ -250,6 +249,8 @@ paths:
       parameters:
         - $ref: '#/parameters/boardIdParam'
         - $ref: '#/parameters/scoreIdParam'
+      produces:
+        - application/json
       operationId: leaderboard_service.score/list-options-score
       tags:
         - meta
