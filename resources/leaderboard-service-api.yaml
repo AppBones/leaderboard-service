@@ -31,7 +31,7 @@ paths:
     get:
       summary: Lists all leaderboards.
       description: ""
-      operationId: leaderboard_service.leaderboard/list-leaderboards
+      operationId: leaderboard_service.leaderboard/leaderboards*get
       tags:
         - leaderboards
       parameters:
@@ -49,7 +49,7 @@ paths:
     post:
       summary: Adds a new leaderboard.
       description: ""
-      operationId: leaderboard_service.leaderboard/create-leaderboard
+      operationId: leaderboard_service.leaderboard/leaderboards*post
       tags:
         - leaderboards
       parameters:
@@ -68,7 +68,7 @@ paths:
       description: ""
       produces:
         - application/json
-      operationId: leaderboard_service.leaderboard/list-options
+      operationId: leaderboard_service.leaderboard/leaderboards*options
       tags:
         - meta
       responses:
@@ -82,7 +82,7 @@ paths:
     get:
       summary: Sends the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.leaderboard/fetch-leaderboard
+      operationId: leaderboard_service.leaderboard/leaderboard*get
       tags:
         - leaderboards
       parameters:
@@ -99,7 +99,7 @@ paths:
     patch:
       summary: Updates the leaderboard identified by boardIdParam with the new configuration.
       description: ""
-      operationId: leaderboard_service.leaderboard/update-leaderboard
+      operationId: leaderboard_service.leaderboard/leaderboard*patch
       tags:
         - leaderboards
       parameters:
@@ -117,7 +117,7 @@ paths:
     delete:
       summary: Deletes the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.leaderboard/delete-leaderboard
+      operationId: leaderboard_service.leaderboard/leaderboard*delete
       tags:
         - leaderboards
       parameters:
@@ -132,7 +132,7 @@ paths:
         - $ref: '#/parameters/boardIdParam'
       produces:
         - application/json
-      operationId: leaderboard_service.leaderboard/list-options-board
+      operationId: leaderboard_service.leaderboard/leaderboard*options
       tags:
         - meta
       responses:
@@ -146,7 +146,7 @@ paths:
     get:
       summary: Sends the scores belonging to the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.score/fetch-scores
+      operationId: leaderboard_service.score/scores*get
       tags:
         - scores
       parameters:
@@ -169,7 +169,7 @@ paths:
     post:
       summary: Adds a score to the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.score/create-score
+      operationId: leaderboard_service.score/scores*post
       tags:
         - scores
       parameters:
@@ -187,7 +187,7 @@ paths:
     delete:
       summary: Deletes all scores in the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.score/delete-scores
+      operationId: leaderboard_service.score/scores*delete
       tags:
         - scores
       parameters:
@@ -202,7 +202,7 @@ paths:
         - $ref: '#/parameters/boardIdParam'
       produces:
         - application/json
-      operationId: leaderboard_service.score/list-options-scores
+      operationId: leaderboard_service.score/scores*options
       tags:
         - meta
       responses:
@@ -216,7 +216,7 @@ paths:
     get:
       summary: Send the score correlating to score_id from the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.score/fetch-score
+      operationId: leaderboard_service.score/score*get
       tags:
         - scores
       parameters:
@@ -234,7 +234,7 @@ paths:
     delete:
       summary: Delete the score correlating to score_id from the leaderboard identified by boardIdParam.
       description: ""
-      operationId: leaderboard_service.score/delete-score
+      operationId: leaderboard_service.score/score*delete
       tags:
         - scores
       parameters:
@@ -251,7 +251,7 @@ paths:
         - $ref: '#/parameters/scoreIdParam'
       produces:
         - application/json
-      operationId: leaderboard_service.score/list-options-score
+      operationId: leaderboard_service.score/score*options
       tags:
         - meta
       responses:
