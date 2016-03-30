@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/leaderboard-service.jar clojure.main -m leaderboard-service.core
+web: java $JVM_OPTS -jar target/leaderboard-service.jar

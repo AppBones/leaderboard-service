@@ -1,4 +1,4 @@
--- src/leaderboard_service/db/sql/leaderboards.sql
+-- src/leaderboard_service/sql/leaderboards.sql
 -- The Leaderboard Service Leaderboards
 
 
@@ -7,7 +7,13 @@
 -- :name create-score-type
 -- :command :execute
 -- :doc Create score_type enum with `int`, `lexical`, and `time`
-CREATE TYPE score_type AS ENUM ('int', 'lexical', 'time');
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'score_type') THEN
+    CREATE TYPE score_type AS ENUM ('int', 'lexical', 'time');
+  END IF;
+END$$;
+
 
 -- :name drop-score-type
 -- :command :execute
@@ -17,7 +23,13 @@ DROP TYPE IF EXISTS score_type;
 -- :name create-sorting-order-type
 -- :command :execute
 -- :doc Create sorting_order enum with `asccending`, and `descending`
-CREATE TYPE sorting_order_type AS ENUM ('ascending', 'descending');
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'sorting_order_type') THEN
+    CREATE TYPE sorting_order_type AS ENUM ('ascending', 'descending');
+  END IF;
+END$$;
+
 
 -- :name drop-sorting-order-type
 -- :command :execute
