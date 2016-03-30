@@ -1,4 +1,4 @@
--- src/leaderboard_service/db/sql/scores.sql
+-- src/leaderboard_service/sql/scores.sql
 -- The Leaderboard Service Scores
 
 

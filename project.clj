@@ -1,13 +1,23 @@
 (defproject leaderboard_service "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/data.json "0.2.6"]
+                 [org.clojure/data.xml "0.0.7"]
+                 [com.stuartsierra/component "0.3.1"]
+                 [com.taoensso/timbre "4.3.1"]
+                 [compojure "1.5.0"]
+                 [environ "1.0.2"]
+                 [halresource "0.2.0-SNAPSHOT"]
+                 [http-kit "2.1.19"]
+                 [io.sarnowski/swagger1st "0.21.0"]
+                 [liberator "0.14.0"]
                  [ring "1.4.0"]
-                 [io.sarnowski/swagger1st "0.15.0"]
                  [com.layerware/hugsql "0.4.4"]
-                 [org.postgresql/postgresql "9.4.1207"]
-                 [environ "1.0.0"]]
+                 [org.postgresql/postgresql "9.4.1207"]]
+  :plugins [[lein-environ "1.0.2"]]
   :min-lein-version "2.0.0"
-  :profiles {:uberjar {:main leaderboard-service.core
+  :profiles {:uberjar {:main leaderboard_service.core
                        :uberjar-name "leaderboard-service.jar"
-                       :aot :all}}
-  :plugins [[lein-ring "0.9.6"]]
-  :ring {:handler leaderboard_service.core/app})
+                       :aot :all}
+             :dev {:source-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.10"]]
+                   :env {:is-dev "true"}}})
