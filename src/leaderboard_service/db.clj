@@ -2,6 +2,7 @@
   (:require [com.stuartsierra.component :as component]
             [hugsql.core :as hugsql]))
 
+;; TODO: Reload when calling `reset` from `dev` namespace
 (hugsql/def-db-fns "leaderboard_service/sql/leaderboards.sql")
 (hugsql/def-db-fns "leaderboard_service/sql/scores.sql")
 

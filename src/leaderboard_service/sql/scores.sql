@@ -68,7 +68,6 @@ Examples:
                        :limit 10,
                        :unique true,
                        :users ["User1" "User2"],
-                       :sorting_asc true,
                        :fromDate "2016-03-18 10:00:00+01",
                        :toDate "2016-03-18 10:00:00+01"})
 
@@ -78,7 +77,6 @@ Supported options:
 :fromDate    -- scores from date with format: `yyyy-MM-dd HH:mm:ssZ`
 :toDate      -- scores up to and including date with format: `yyyy-MM-dd HH:mm:ssZ`
 :users       -- vector of users to get scores from
-:sorting_asc -- sort the scores ascending (except for descending)
 */
 SELECT scores_2.*
 FROM (SELECT
@@ -87,13 +85,21 @@ FROM (SELECT
       FROM (SELECT *
             FROM Scores
             WHERE board_id = :board_id
-            --~ (if (contains? params :fromDate) "AND score_date >= (:fromDate)::TIMESTAMP")
-            --~ (if (contains? params :toDate) "AND score_date <= (:toDate)::TIMESTAMP")
-            --~ (if (contains? params :users) "AND username IN (:v*:users)")
+            --~ (if (not= (get params :fromDate) nil) "AND score_date >= (:fromDate)::TIMESTAMP")
+            --~ (if (not= (get params :toDate) nil) "AND score_date <= (:toDate)::TIMESTAMP")
+            --~ (if (seq (:users params)) "AND username IN (:v*:users)")
             ORDER BY score DESC
            ) scores_1
-     ) scores_2
-ORDER BY --~ (if (true? (params :sorting_asc)) "scores_2.score ASC, " "scores_2.score DESC, ")
-  scores_2.username ASC
+     ) scores_2, (SELECT DISTINCT sorting_order
+                  FROM Leaderboards
+                  WHERE id = :board_id
+                  LIMIT 1) leaderboard
+ORDER BY
+  CASE leaderboard.sorting_order = 'ascending'
+  WHEN TRUE
+    THEN score
+  ELSE score * -1
+  END
+  , scores_2.username ASC
 OFFSET (:page - 1) * :limit
 LIMIT :limit;

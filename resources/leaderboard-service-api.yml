@@ -157,6 +157,26 @@ paths:
           in: query
           description: If true, only returns the best score from each User
           type: boolean
+        - name: fromDate
+          in: query
+          description: Results from date (ex; 2016-01-01T00:00:00.00+01:00
+          type: string
+          format: date-time
+          required: false
+        - name: toDate
+          in: query
+          description: Results up to and including date (ex; 2016-01-01T00:00:00.00+01:00)
+          type: string
+          format: date-time
+          required: false
+          # collectionFormat not yet supported by swagger1st
+#        - name: forUsers
+#          in: query
+#          description: If not empty, shows results only for given names
+#          type: array
+#          items:
+#            type: string
+#          collectionFormat: multi
       responses:
         200:
           description: Scores sent.
@@ -265,7 +285,7 @@ parameters:
   boardIdParam:
     name: board_id
     in: path
-    type: string
+    type: integer
     description: ID of the leaderboard
     required: true
   limitParam:
@@ -291,10 +311,8 @@ parameters:
     required: true
 
 definitions:
-
   Links:
     type: object
-
   Leaderboard:
     type: object
     required:
@@ -326,14 +344,11 @@ definitions:
       max_score:
         type: integer
         format: int64
-
   Score:
     type: object
     required:
       - username
       - score
-      - date
-      - board_id
     properties:
       _links:
         $ref: '#/definitions/Links'
@@ -346,6 +361,8 @@ definitions:
       username:
         type: string
       score:
-        type: string
+        type: integer
+        format: int64
       board_id:
-        type: string
+        type: integer
+        format: int64
