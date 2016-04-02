@@ -15,3 +15,15 @@
   [request-definition]
   (let [opId (get request-definition "operationId")]
     (s1stexec/function-by-name (first (str/split opId #"\*")))))
+
+(defn query-from-request
+  [ctx]
+  (get-in ctx [:request :parameters :query]))
+
+(defn path-from-request
+  [ctx]
+  (get-in ctx [:request :parameters :path]))
+
+(defn body-from-request
+  [ctx]
+  (get-in ctx [:request :parameters :body]))
