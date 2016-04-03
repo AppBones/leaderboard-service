@@ -25,5 +25,5 @@
         system (create-service {:spec "leaderboard-service-api.yml"
                                 :http-port (read-string port)
                                 :is-dev false
-                                :db-conn db-conn})]
+                                :db-conn (str db-conn "?sslmode=require")})]
     (component/start system)))

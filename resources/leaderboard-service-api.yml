@@ -14,7 +14,8 @@ info:
 host: appbone.herokuapp.com
 basePath: /api/v1/leaderboards
 schemes:
-  - http #FIXME Make https for production
+#  - http
+  - https
 consumes:
   - application/json
   - application/xml
