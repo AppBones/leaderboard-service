@@ -24,7 +24,7 @@
     (stop))
   (let [config {:spec "leaderboard-service-api.yml"
                 :http-port 3000
-                :db-conn (env :database-url)}]
+                :db-conn (str (env :database-url) "?sslmode=require")}]
     (def system (create-service config))
     (alter-var-root #'system component/start)))
 

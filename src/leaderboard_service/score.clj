@@ -60,13 +60,13 @@
           :post-redirect? false
           :exists? #(if-let [leaderboard (leaderboard/get-leaderboard % db-conn)]
                      {:leaderboard leaderboard})
-          :delete! #(delete-scores % db-conn))]
+          :delete! #(delete-scores % db-conn)
           :handle-created #(let [l (get-in % [:hal :href])]
                             (ring-response (:score %) {:headers {"Location" l}}))
           :handle-exception handle-exception
           :handle-options #(describe-resource % spec)
           :handle-ok #((get-scores % db-conn) :scores)
-          :handle-not-found {:error "Leaderboard not found."}
+          :handle-not-found {:error "Leaderboard not found."})]
     (handler ctx)))
 
 
