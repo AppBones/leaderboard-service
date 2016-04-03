@@ -60,13 +60,13 @@
           :post-redirect? false
           :exists? #(if-let [leaderboard (leaderboard/get-leaderboard % db-conn)]
                      {:leaderboard leaderboard})
+          :delete! #(delete-scores % db-conn))]
           :handle-created #(let [l (get-in % [:hal :href])]
                             (ring-response (:score %) {:headers {"Location" l}}))
           :handle-exception handle-exception
           :handle-options #(describe-resource % spec)
           :handle-ok #((get-scores % db-conn) :scores)
           :handle-not-found {:error "Leaderboard not found."}
-          :delete! #(delete-scores % db-conn))]
     (handler ctx)))
 
 
@@ -99,7 +99,7 @@
           :available-media-types (get spec "produces")
           :exists? #(if-let [score (get-score % db-conn)]
                      {:score score})
+          :delete! #(delete-score % db-conn)
           :handle-ok :score
-          :handle-not-found {:error "Score not found"}
-          :delete! #(delete-score % db-conn))]
+          :handle-not-found {:error "Score not found"})]
     (handler ctx)))
