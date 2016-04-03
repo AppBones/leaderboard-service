@@ -26,9 +26,23 @@ CREATE TABLE IF NOT EXISTS Scores (
 -- ### DML ###
 
 -- :name delete-score :! :n
--- :doc Deletes a score with a given id and returns the number of affected rows [0 to 1]
+-- :doc Deletes a single score with a given id and returns the number of deleted rows [0 to 1]
 DELETE FROM Scores
-WHERE id = :id;
+WHERE id = :id AND board_id = :board_id;
+
+
+-- :name delete-scores :! :n
+-- :doc Deletes all scores for a given board_id and returns the number of deleted rows
+DELETE FROM Scores
+WHERE board_id = :board_id;
+
+
+-- :name fetch-score :?
+-- :doc Returns a single score given a board_id and the id of the score
+SELECT *
+FROM Scores
+WHERE id = (:id)::BIGINT AND
+      board_id = :board_id;
 
 
 -- :name insert-score :insert
@@ -69,37 +83,51 @@ Examples:
                        :unique true,
                        :users ["User1" "User2"],
                        :fromDate "2016-03-18 10:00:00+01",
-                       :toDate "2016-03-18 10:00:00+01"})
+                       :toDate "2016-03-18 10:00:00+01"
+                       :sort_ascending true})
 
 Supported options:
 
-:unique      -- only one result for each username
-:fromDate    -- scores from date with format: `yyyy-MM-dd HH:mm:ssZ`
-:toDate      -- scores up to and including date with format: `yyyy-MM-dd HH:mm:ssZ`
-:users       -- vector of users to get scores from
+:unique         -- only one result for each username
+:fromDate       -- scores from date with format: `yyyy-MM-dd HH:mm:ssZ`
+:toDate         -- scores up to and including date with format: `yyyy-MM-dd HH:mm:ssZ`
+:users          -- vector of users to get scores from
+:sort_ascending -- if true, sort scores ascending, else descending
 */
-SELECT scores_2.*
-FROM (SELECT
-        --~ (if (true? (params :unique)) "DISTINCT ON (username)")
-        *
-      FROM (SELECT *
-            FROM Scores
-            WHERE board_id = :board_id
-            --~ (if (not= (get params :fromDate) nil) "AND score_date >= (:fromDate)::TIMESTAMP")
-            --~ (if (not= (get params :toDate) nil) "AND score_date <= (:toDate)::TIMESTAMP")
-            --~ (if (seq (:users params)) "AND username IN (:v*:users)")
-            ORDER BY score DESC
-           ) scores_1
-     ) scores_2, (SELECT DISTINCT sorting_order
-                  FROM Leaderboards
-                  WHERE id = :board_id
-                  LIMIT 1) leaderboard
+SELECT s.*
+FROM
+  -- Create bestScores table, only on unique=true
+  /*~ (if (true? (params :unique))  (if (true? (params :sort_ascending)) */
+  (SELECT
+    board_id,
+    username,
+    min(score) AS score
+  FROM Scores
+  GROUP BY username, board_id) bestScores,
+  /*~*/
+  (SELECT
+     board_id,
+     username,
+     max(score) AS score
+   FROM Scores
+   GROUP BY username, board_id) bestScores,
+  /*~ )) ~*/
+  Scores s
+WHERE
+  s.board_id = :board_id
+  --~ (if (not= (get params :fromDate) nil) "AND s.score_date >= (:fromDate)::TIMESTAMP")
+  --~ (if (not= (get params :toDate) nil) "AND s.score_date <= (:toDate)::TIMESTAMP")
+  --~ (if (seq (:users params)) "AND s.username IN (:v*:users)")
+  -- Join s and bestScores, only on unique=true
+  /*~ (if (true? (params :unique)) */
+  AND s.board_id = bestScores.board_id
+  AND s.username = bestScores.username
+  AND s.score = bestScores.score
+  /*~ ) ~*/
 ORDER BY
-  CASE leaderboard.sorting_order = 'ascending'
-  WHEN TRUE
-    THEN score
-  ELSE score * -1
-  END
-  , scores_2.username ASC
+  --~ (if (true? (params :sort_ascending)) "s.score ASC ," "s.score DESC ," )
+  s.username ASC
 OFFSET (:page - 1) * :limit
 LIMIT :limit;
+
+

@@ -5,46 +5,52 @@
             [liberator.representation :refer [ring-response]]
             [halresource.resource :as hal]
             [leaderboard_service.util :as util]
+            [leaderboard_service.leaderboard :as leaderboard]
             [clj-time.jdbc]))
 
 
 ;; Scores
 
 (defn get-scores
-  "Fetches a page containing all scores for a given board_id up to a specified limit."
+  "Fetches a page containing all scores for a given board_id up to a specified limit.
+   Will always return a sequence (even if the query results in 0 scores)."
   [ctx db-conn]
-  (let [board_id (get (util/path-from-request ctx) :board_id)
+  (let [board_id (:board_id (util/path-from-request ctx))
+        sort_ascending (= (get-in ctx [:leaderboard :sorting_order]) "ascending")
         {:keys [limit page unique fromDate toDate]} (util/query-from-request ctx)
         body (db/fetch-scores db-conn {:board_id board_id,
                                        :page page,
                                        :limit limit,
                                        :unique unique,
-                                       ;:users forUsers, ;; Skipped till swagger1st support collectionFormat
+                                       ;:users forUsers, ;; FIXME: Skipped till swagger1st supports collectionFormat
                                        :fromDate fromDate,
-                                       :toDate toDate
-                                       })
-        loc (str (self-href ctx))]
-    (-> ctx
-        (assoc-in [:hal :href] loc)
-        (assoc :data body))))
+                                       :toDate toDate,
+                                       :sort_ascending sort_ascending})]
+    {:scores body}))
+
+(defn delete-scores
+  "Deletes all scores with a given board_id."
+  [ctx db-conn]
+  (let [board_id (:board_id(util/path-from-request ctx))
+        affected-rows (db/delete-scores db-conn {:board_id board_id})]
+    {:num-deleted-scores affected-rows}))
 
 (defn post-score!
   "Post a score to the database."
   [ctx db-conn]
-  (let [board_id (get (util/path-from-request ctx) :board_id)
+  (let [board_id (:board_id (util/path-from-request ctx))
         {:keys [score username]} (util/body-from-request ctx)
         body (db/insert-score db-conn {:board_id board_id
                                        :score score
                                        :username username})
-        id (get body :id)
+        id (:id body)
         loc (str (self-href ctx) "/" id)]
     (-> ctx
         (assoc-in [:hal :href] loc)
-        (assoc :data body))))
+        (assoc :score body))))
 
-;; TODO: Add DELETE
 (defn scores [ctx db spec]
-  (let [db-conn (get db :conn)
+  (let [db-conn (:conn db)
         handler
         (resource
           :initialize-context {:hal (hal/new-resource (self-href {:request ctx}))}
@@ -52,26 +58,48 @@
           :available-media-types (get spec "produces")
           :post! #(post-score! % db-conn)
           :post-redirect? false
+          :exists? #(if-let [leaderboard (leaderboard/get-leaderboard % db-conn)]
+                     {:leaderboard leaderboard})
           :handle-created #(let [l (get-in % [:hal :href])]
-                            (ring-response (:data %) {:headers {"Location" l}}))
+                            (ring-response (:score %) {:headers {"Location" l}}))
           :handle-exception handle-exception
           :handle-options #(describe-resource % spec)
-          :handle-ok #(let [ctx (get-scores % db-conn)]
-                       (ring-response (:data ctx) {}))
-          )]
+          :handle-ok #((get-scores % db-conn) :scores)
+          :handle-not-found {:error "Leaderboard not found."}
+          :delete! #(delete-scores % db-conn))]
     (handler ctx)))
 
 
 
 ;; Score
 
-(defn score [ctx db path]
-  (let [spec (get-in ctx [:swagger :context :definition "paths" path])
+(defn get-score
+  "Fetches a score for a given board_id and score_id.
+   Returns nil if the score didn't exist."
+  [ctx db-conn]
+  (let [{:keys [board_id score_id]} (util/path-from-request ctx)
+        score (db/fetch-score db-conn {:board_id board_id,
+                                       :id score_id})]
+    (first score)))
+
+(defn delete-score
+  "Deletes a score with a given board_id and score_id."
+  [ctx db-conn]
+  (let [{:keys [board_id score_id]} (util/path-from-request ctx)
+        affected-rows (db/delete-score db-conn {:board_id board_id,
+                                                :id score_id})]
+    {:num-deleted-scores affected-rows}))
+
+(defn score [ctx db spec]
+  (let [db-conn (:conn db)
         handler
         (resource
           :initialize-context {:hal (hal/new-resource (self-href {:request ctx}))}
-          :allowed-methods [:get :post :delete :options]
+          :allowed-methods [:get :delete :options]
           :available-media-types (get spec "produces")
-          :exists? #() ;; Check if resource exists (use for Delete, patch and single get)
-          )]
+          :exists? #(if-let [score (get-score % db-conn)]
+                     {:score score})
+          :handle-ok :score
+          :handle-not-found {:error "Score not found"}
+          :delete! #(delete-score % db-conn))]
     (handler ctx)))

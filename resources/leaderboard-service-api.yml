@@ -123,7 +123,7 @@ paths:
       parameters:
         - $ref: '#/parameters/boardIdParam'
       responses:
-        202:
+        204:
           description: Leaderboard queued for deletion.
 
     options:
@@ -213,7 +213,7 @@ paths:
       parameters:
         - $ref: '#/parameters/boardIdParam'
       responses:
-        202:
+        204:
           description: All scores queued for deletion.
 
     options:
@@ -247,7 +247,7 @@ paths:
           description: Score sent.
           schema:
             title: Score
-            type: array
+            type: object
             items:
               $ref: '#/definitions/Score'
 
@@ -261,7 +261,7 @@ paths:
         - $ref: '#/parameters/boardIdParam'
         - $ref: '#/parameters/scoreIdParam'
       responses:
-        202:
+        204:
           description: Score queued for deletion.
 
     options:
@@ -307,7 +307,7 @@ parameters:
     name: score_id
     in: path
     description: the id of the score you want
-    type: string
+    type: integer
     required: true
 
 definitions:

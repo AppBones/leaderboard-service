@@ -6,7 +6,17 @@
 (hugsql/def-db-fns "leaderboard_service/sql/leaderboards.sql")
 (hugsql/def-db-fns "leaderboard_service/sql/scores.sql")
 
-(defrecord DB [counter]
+;; Current way to reload in REPL
+(comment
+  (do
+    (ns leaderboard_service.db)
+    (hugsql/def-db-fns "leaderboard_service/sql/scores.sql")
+    (hugsql/def-db-fns "leaderboard_service/sql/leaderboards.sql")
+    (ns dev)
+    (reset))
+  )
+
+(defrecord DB []
   component/Lifecycle
 
   (start [component]
