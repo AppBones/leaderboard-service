@@ -9,7 +9,10 @@
 -- :doc Create score_type enum with `int`, `lexical`, and `time`
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'score_type') THEN
+  IF NOT EXISTS(SELECT 1
+                FROM pg_type
+                WHERE typname = 'score_type')
+  THEN
     CREATE TYPE score_type AS ENUM ('int', 'lexical', 'time');
   END IF;
 END$$;
@@ -25,7 +28,10 @@ DROP TYPE IF EXISTS score_type;
 -- :doc Create sorting_order enum with `asccending`, and `descending`
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'sorting_order_type') THEN
+  IF NOT EXISTS(SELECT 1
+                FROM pg_type
+                WHERE typname = 'sorting_order_type')
+  THEN
     CREATE TYPE sorting_order_type AS ENUM ('ascending', 'descending');
   END IF;
 END$$;
@@ -59,8 +65,14 @@ CREATE TABLE IF NOT EXISTS Leaderboards (
 );
 
 
-
 -- ### DML ###
+
+-- :name fetch-leaderboard :?
+-- :doc Returns a single leaderboard with a given board_id
+SELECT DISTINCT *
+FROM Leaderboards
+WHERE id = :id
+LIMIT 1;
 
 -- :name fetch-leaderboards :?
 -- :doc Gets a page containing all leaderboards up to a specified limit.
@@ -141,4 +153,4 @@ SET
                        (if (= (name field) "score_type") "::score_type")
                        (if (= (name field) "sorting_order") "::sorting_order_type"))))
   ~*/
-WHERE id = :id;
+  WHERE id = :id;
