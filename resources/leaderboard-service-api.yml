@@ -93,8 +93,7 @@ paths:
           schema:
             title: Leaderboard
             type: object
-            items:
-              $ref: '#/definitions/Leaderboard'
+            $ref: '#/definitions/Leaderboard'
 
     patch:
       summary: Updates the leaderboard identified by boardIdParam with the new configuration.
@@ -248,8 +247,7 @@ paths:
           schema:
             title: Score
             type: object
-            items:
-              $ref: '#/definitions/Score'
+            $ref: '#/definitions/Score'
 
     delete:
       summary: Delete the score correlating to score_id from the leaderboard identified by boardIdParam.
