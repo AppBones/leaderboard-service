@@ -9,7 +9,7 @@
             [clj-time.jdbc]))
 
 
-;; Scores
+;; Helper Functions
 
 (defn get-scores
   "Fetches a page containing all scores for a given board_id up to a specified limit.
@@ -39,39 +39,16 @@
   "Post a score to the database."
   [ctx db-conn]
   (let [board_id (:board_id (util/path-from-request ctx))
-        {:keys [score username]} (util/body-from-request ctx)
+        {:keys [score username]} (:score (util/body-from-request ctx))
         body (db/insert-score db-conn {:board_id board_id
                                        :score score
                                        :username username})
         id (:id body)
         loc (str (self-href ctx) "/" id)]
+    (println body)
     (-> ctx
         (assoc-in [:hal :href] loc)
         (assoc :score body))))
-
-(defn scores [ctx db spec]
-  (let [db-conn (:conn db)
-        handler
-        (resource
-          :initialize-context {:hal (hal/new-resource (self-href {:request ctx}))}
-          :allowed-methods [:get :post :delete :options]
-          :available-media-types (get spec "produces")
-          :post! #(post-score! % db-conn)
-          :post-redirect? false
-          :exists? #(if-let [leaderboard (leaderboard/get-leaderboard % db-conn)]
-                     {:leaderboard leaderboard})
-          :delete! #(delete-scores % db-conn)
-          :handle-created #(let [l (get-in % [:hal :href])]
-                            (ring-response (:score %) {:headers {"Location" l}}))
-          :handle-exception handle-exception
-          :handle-options #(describe-resource % spec)
-          :handle-ok #((get-scores % db-conn) :scores)
-          :handle-not-found {:error "Leaderboard not found."})]
-    (handler ctx)))
-
-
-
-;; Score
 
 (defn get-score
   "Fetches a score for a given board_id and score_id.
@@ -90,6 +67,34 @@
                                                 :id score_id})]
     {:num-deleted-scores affected-rows}))
 
+
+
+;; /leaderboards/{board_id}/items
+
+(defn scores [ctx db spec]
+  (let [db-conn (:conn db)
+        handler
+        (resource
+          :initialize-context {:hal (hal/new-resource (self-href {:request ctx}))}
+          :allowed-methods [:get :post :delete :options]
+          :available-media-types (get spec "produces")
+          :post! #(post-score! % db-conn)
+          :post-redirect? false
+          :exists? #(if-let [leaderboard (leaderboard/get-leaderboard % db-conn)]
+                     {:leaderboard leaderboard})
+          :delete! #(delete-scores % db-conn)
+          :handle-created #(let [l (get-in % [:hal :href])]
+                                            (ring-response (:score %) {:headers {"Location" l}}))
+          :handle-exception handle-exception
+          :handle-options #(describe-resource % spec)
+          :handle-ok #((get-scores % db-conn) :scores)
+          :handle-not-found {:message "Leaderboard not found."})]
+    (handler ctx)))
+
+
+
+;; /leaderboards/{board_id}/items/{score_id}
+
 (defn score [ctx db spec]
   (let [db-conn (:conn db)
         handler
@@ -100,6 +105,7 @@
           :exists? #(if-let [score (get-score % db-conn)]
                      {:score score})
           :delete! #(delete-score % db-conn)
+          :handle-options #(describe-resource % spec)
           :handle-ok :score
-          :handle-not-found {:error "Score not found"})]
+          :handle-not-found {:message "Score not found"})]
     (handler ctx)))

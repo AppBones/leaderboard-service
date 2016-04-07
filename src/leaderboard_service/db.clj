@@ -21,11 +21,11 @@
 
   (start [component]
     (println ";; Starting DB component ...")
-    (let [conn (get component :conn)]
-      (create-score-type conn)
-      (create-sorting-order-type conn)
-      (create-leaderboards-table conn)
-      (create-scores-table conn))
+    ;(let [conn (get component :conn)]
+    ;  (create-score-type conn)
+    ;  (create-sorting-order-type conn)
+    ;  (create-leaderboards-table conn)
+    ;  (create-scores-table conn))
     component)
 
   (stop [component]
