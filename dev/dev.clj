@@ -10,6 +10,7 @@
             [clojure.test :as test]
             [clojure.tools.namespace.repl :refer [refresh refresh-all]]
             [com.stuartsierra.component :as component]
+            [hugsql.core :as hugsql]
             [environ.core :refer [env]]))
 
 (def system nil)
@@ -25,6 +26,11 @@
   (let [config {:spec "leaderboard-service-api.yml"
                 :http-port 3000
                 :db-conn (str (env :database-url) "?sslmode=require")}]
+    (do
+      (ns leaderboard_service.db)
+      (hugsql/def-db-fns "leaderboard_service/sql/scores.sql")
+      (hugsql/def-db-fns "leaderboard_service/sql/leaderboards.sql")
+      (ns dev))
     (def system (create-service config))
     (alter-var-root #'system component/start)))
 
