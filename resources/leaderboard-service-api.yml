@@ -30,12 +30,17 @@ produces:
 paths:
   /:
     get:
-      summary: Lists all leaderboards.
+      summary: Lists all leaderboards for a given appId.
       description: ""
       operationId: leaderboard_service.leaderboard/leaderboards*get
       tags:
         - leaderboards
       parameters:
+        - name: appId
+          in: query
+          description: The app id you want leaderboards from
+          type: integer
+          required: true
         - $ref: '#/parameters/limitParam'
         - $ref: '#/parameters/pageParam'
       responses:
@@ -108,7 +113,7 @@ paths:
           in: body
           description: The leaderboard configuration you want to amend
           schema:
-            $ref: '#/definitions/Leaderboard'
+            $ref: '#/definitions/Leaderboard-partial'
           required: true
       responses:
         204:
@@ -315,12 +320,11 @@ definitions:
   Leaderboard:
     type: object
     required:
-       - board_id
-       - title
        - app_id
+       - title
     properties:
       _links:
-       $ref: '#/definitions/Links'
+        $ref: '#/definitions/Links'
       board_id:
         type: integer
         format: int64
@@ -343,6 +347,35 @@ definitions:
       max_score:
         type: integer
         format: int64
+  Leaderboard-partial: # Used for patching
+      type: object
+      required:
+         - app_id
+      properties:
+        _links:
+          $ref: '#/definitions/Links'
+        board_id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+        app_id:
+          type: integer
+          format: int64
+        score_type:
+          type: string
+          enum: [ "int", "lexical", "time" ]
+        sorting_order:
+          type: string
+          enum: [ "ascending", "descending" ]
+        min_score:
+          type: integer
+          format: int64
+        max_score:
+          type: integer
+          format: int64
   Score:
     type: object
     required:

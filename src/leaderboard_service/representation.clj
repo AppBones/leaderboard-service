@@ -1,6 +1,5 @@
 (ns leaderboard_service.representation
-  (:require [clojure.data.json :as json]
-            [clojure.data.xml :as xml]
+  (:require [clojure.data.xml :as xml]
             [halresource.resource :as hal]
             [liberator.representation :refer [render-map-generic
                                               render-seq-generic]]))

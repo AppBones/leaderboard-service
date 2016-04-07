@@ -63,7 +63,7 @@ Examples:
 INSERT INTO Scores (board_id, score, score_date, username)
 VALUES (:board_id,
         :score,
-        --~ (if (contains? params :score_date) "(:score_date)::TIMESTAMP," "DEFAULT,")
+        --~ (if (not= (:score_date params) nil) "(:score_date)::TIMESTAMP," "DEFAULT,")
         :username);
 
 

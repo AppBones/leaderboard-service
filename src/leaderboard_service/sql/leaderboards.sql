@@ -59,9 +59,7 @@ CREATE TABLE IF NOT EXISTS Leaderboards (
   score_type      score_type DEFAULT 'int'                NOT NULL,
   sorting_order   sorting_order_type DEFAULT 'descending' NOT NULL,
   min_score       INT DEFAULT -2147483648                 NOT NULL,
-  max_score       INT DEFAULT 2147483647                  NOT NULL,
-  suffix_singular VARCHAR(50) DEFAULT 'point'             NOT NULL,
-  suffix_plural   VARCHAR(50) DEFAULT 'points'            NOT NULL
+  max_score       INT DEFAULT 2147483647                  NOT NULL
 );
 
 
@@ -75,9 +73,10 @@ WHERE id = :id
 LIMIT 1;
 
 -- :name fetch-leaderboards :?
--- :doc Gets a page containing all leaderboards up to a specified limit.
+-- :doc Gets a page containing all leaderboards for a given app_id up to a specified limit.
 SELECT *
 FROM Leaderboards
+WHERE app_id = :app_id
 OFFSET (:page - 1) * :limit
 LIMIT :limit;
 
@@ -103,21 +102,17 @@ Examples:
                              :score_type "int",
                              :sorting_order "ascending",
                              :min_score -1337,
-                             :max_score 1337,
-                             :suffix_singular "banana",
-                             :suffix_plural "bananas"})
+                             :max_score 1337})
 */
-INSERT INTO Leaderboards (title, description, app_id, score_type, sorting_order, min_score, max_score, suffix_singular, suffix_plural)
+INSERT INTO Leaderboards (title, description, app_id, score_type, sorting_order, min_score, max_score)
 VALUES (
   :title,
-  --~ (if (contains? params :description)     ":description," "DEFAULT,")
+  --~ (if (not= (:description params) nil) ":description," "DEFAULT,")
   :app_id
-  --~ (if (contains? params :score_type)      ", (:score_type)::score_type" ", DEFAULT")
-  --~ (if (contains? params :sorting_order)   ", (:sorting_order)::sorting_order_type" ", DEFAULT")
-  --~ (if (contains? params :min_score)       ", :min_score" ", DEFAULT")
-  --~ (if (contains? params :max_score)       ", :max_score" ", DEFAULT")
-  --~ (if (contains? params :suffix_singular) ", :suffix_singular" ", DEFAULT")
-  --~ (if (contains? params :suffix_plural)   ", :suffix_plural" ", DEFAULT")
+  --~ (if (not= (:score_type params) nil) ", (:score_type)::score_type" ", DEFAULT")
+  --~ (if (not= (:sorting_order params) nil) ", (:sorting_order)::sorting_order_type" ", DEFAULT")
+  --~ (if (not= (:min_score params) nil) ", :min_score" ", DEFAULT")
+  --~ (if (not= (:max_score params) nil) ", :max_score" ", DEFAULT")
 );
 
 
@@ -137,20 +132,18 @@ Examples:
                                        :score_type "int",
                                        :sorting_order "descending",
                                        :min_score -1337,
-                                       :max_score 1337,
-                                       :suffix_singular "banana",
-                                       :suffix_plural "bananas"}})
+                                       :max_score 1337}})
 */
 /* :require [clojure.string :as string]
             [hugsql.parameters :refer [identifier-param-quote]] */
 UPDATE Leaderboards
 SET
   /*~
-  (string/join ","
-             (for [[field _] (:updates params)]
-                  (str (identifier-param-quote (name field) options)
-                       " = (:v:updates." (name field) ")"
-                       (if (= (name field) "score_type") "::score_type")
-                       (if (= (name field) "sorting_order") "::sorting_order_type"))))
+  (let [update-map (into {} (filter second (:updates params)))]
+  (string/join "," (for [[field _] update-map]
+                     (str (identifier-param-quote (name field) options)
+                          " = (:v:updates." (name field) ")"
+                          (if (= (name field) "score_type") "::score_type")
+                          (if (= (name field) "sorting_order") "::sorting_order_type")))))
   ~*/
   WHERE id = :id;
