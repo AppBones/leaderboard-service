@@ -81,7 +81,6 @@
           :available-media-types (get spec "produces")
           :post! #(post-leaderboard! % db-conn)
           :post-redirect? false
-          ;:exists? ;; TODO: Check if app_id exists (call App Profile service)
           :handle-created #(let [l (get-in % [:hal :href])]
                             (ring-response (:leaderboard %) {:headers {"Location" l}}))
           :handle-exception handle-exception

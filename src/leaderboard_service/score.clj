@@ -18,20 +18,20 @@
   (let [board_id (:board_id (util/path-from-request ctx))
         sort_ascending (= (get-in ctx [:leaderboard :sorting_order]) "ascending")
         {:keys [limit page unique fromDate toDate]} (util/query-from-request ctx)
-        body (db/fetch-scores db-conn {:board_id board_id,
-                                       :page page,
-                                       :limit limit,
-                                       :unique unique,
+        body (db/fetch-scores db-conn {:board_id       board_id,
+                                       :page           page,
+                                       :limit          limit,
+                                       :unique         unique,
                                        ;:users forUsers, ;; FIXME: Skipped till swagger1st supports collectionFormat
-                                       :fromDate fromDate,
-                                       :toDate toDate,
+                                       :fromDate       fromDate,
+                                       :toDate         toDate,
                                        :sort_ascending sort_ascending})]
     {:scores body}))
 
 (defn delete-scores
   "Deletes all scores with a given board_id."
   [ctx db-conn]
-  (let [board_id (:board_id(util/path-from-request ctx))
+  (let [board_id (:board_id (util/path-from-request ctx))
         affected-rows (db/delete-scores db-conn {:board_id board_id})]
     {:num-deleted-scores affected-rows}))
 
@@ -41,11 +41,10 @@
   (let [board_id (:board_id (util/path-from-request ctx))
         {:keys [score username]} (:score (util/body-from-request ctx))
         body (db/insert-score db-conn {:board_id board_id
-                                       :score score
+                                       :score    score
                                        :username username})
         id (:id body)
         loc (str (self-href ctx) "/" id)]
-    (println body)
     (-> ctx
         (assoc-in [:hal :href] loc)
         (assoc :score body))))
@@ -56,7 +55,7 @@
   [ctx db-conn]
   (let [{:keys [board_id score_id]} (util/path-from-request ctx)
         score (db/fetch-score db-conn {:board_id board_id,
-                                       :id score_id})]
+                                       :id       score_id})]
     (first score)))
 
 (defn delete-score
@@ -64,7 +63,7 @@
   [ctx db-conn]
   (let [{:keys [board_id score_id]} (util/path-from-request ctx)
         affected-rows (db/delete-score db-conn {:board_id board_id,
-                                                :id score_id})]
+                                                :id       score_id})]
     {:num-deleted-scores affected-rows}))
 
 
@@ -78,13 +77,14 @@
           :initialize-context {:hal (hal/new-resource (self-href {:request ctx}))}
           :allowed-methods [:get :post :delete :options]
           :available-media-types (get spec "produces")
+          :can-post-to-missing? false
           :post! #(post-score! % db-conn)
           :post-redirect? false
           :exists? #(if-let [leaderboard (leaderboard/get-leaderboard % db-conn)]
                      {:leaderboard leaderboard})
           :delete! #(delete-scores % db-conn)
           :handle-created #(let [l (get-in % [:hal :href])]
-                                            (ring-response (:score %) {:headers {"Location" l}}))
+                            (ring-response (:score %) {:headers {"Location" l}}))
           :handle-exception handle-exception
           :handle-options #(describe-resource % spec)
           :handle-ok #((get-scores % db-conn) :scores)
