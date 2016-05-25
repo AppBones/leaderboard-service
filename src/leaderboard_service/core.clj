@@ -7,15 +7,17 @@
 
 (defn create-service [config-opts]
   "wires up the web service's dependency graph with provided configuration"
-  (let [{:keys [spec http-port is-dev db-conn]} config-opts
-        is-dev (if (nil? is-dev) (= "true" (env :is-dev)) is-dev)]
+  (let [{:keys [spec http-port is-dev db-conn pubkey]} config-opts
+        is-dev (if (nil? is-dev) (= "true" (env :is-dev)) is-dev)
+        pubkey (when (nil? pubkey) (env :appbone-public-key))]
     (component/system-map
      :config-opts config-opts
      :db (db/map->DB {:conn db-conn})
      :http (component/using
             (http/map->HTTP {:spec spec
                              :port http-port
-                             :is-dev is-dev})
+                             :is-dev is-dev
+                             :pubkey pubkey})
             [:db]))))
 
 (defn -main [& args]

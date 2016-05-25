@@ -1,11 +1,13 @@
 (ns leaderboard_service.http
   (:require [io.sarnowski.swagger1st.core :as s1st]
             [com.stuartsierra.component :as component]
+            [buddy.core.keys :as keys]
             [org.httpkit.server :refer [run-server]]
             [liberator.dev :refer [wrap-trace]]
-            [leaderboard_service.util :refer :all]))
+            [leaderboard_service.util :refer :all]
+            [leaderboard_service.middleware :refer :all]))
 
-(defrecord HTTP [server db spec port is-dev]
+(defrecord HTTP [server db spec port is-dev pubkey]
   component/Lifecycle
 
   (start [this]
@@ -29,7 +31,7 @@
 
           handler (if is-dev
                     (wrap-trace handler :header :ui)
-                    handler)]
+                    (wrap-oauth handler (keys/public-key pubkey)))]
 
       (assoc this :server (run-server handler {:join? false
                                                :port port}))))

@@ -4,6 +4,7 @@
                  [org.clojure/data.xml "0.0.7"]
                  [com.stuartsierra/component "0.3.1"]
                  [com.taoensso/timbre "4.3.1"]
+                 [buddy "0.13.0"]
                  [compojure "1.5.0"]
                  [environ "1.0.2"]
                  [halresource "0.2.0-SNAPSHOT"]
