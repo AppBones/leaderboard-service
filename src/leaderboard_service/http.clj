@@ -31,7 +31,7 @@
 
           handler (if is-dev
                     (wrap-trace handler :header :ui)
-                    (wrap-oauth handler (keys/public-key pubkey)))]
+                    (wrap-oauth handler (keys/str->public-key pubkey)))]
 
       (assoc this :server (run-server handler {:join? false
                                                :port port}))))
