@@ -1,0 +1,8 @@
+language: clojure
+deploy:
+  provider: heroku
+  app: appbone-leaderboard
+  api_key:
+    secure: xaciR4Il+eJqR6kwKkkRBS8GtGtePBzAzReIYpvY1Cu5D+sTDQyJVpFh9Qi//TYUasUSb5Rku3BALAw20vAX/X/PPmSEzm38hthnM8tnUGanWVJqSNz80KiyaV8BtkV0sTgLWEU815M5vGFZ3tYkYBSo+RZPCI2M2xowPACyTehrm8QSXocp28axHzvID+1Mah0wIALYj1JMOqCHgqQ8+GrWi8M5Rob0Kc0ptPu0fd46mJ4aJG+Yvs9bs0VXL3SugizkFGjKMX7bWNNLUuxnP0LeOih6f9a/vvDlKFhRyXzn/dOCY0s/BGl0ZvUVyhKgBlzyTJx62i5MBF2dsYfzVq/iQN+1NjEnD3YQR9FbRcdQsAEnGSHcc7fdyNGDqsSb2rYyxNubegM3yYYGK99vJhCNZa760qW1c0Y3EteEvxjwGNM1t5lweZVj1asxTVViI0On/DbFktxKdZLsXLXXzKOC/ULa5+JRbILK+1mEiqXaij0II5wK2YJSq52yfMvpXz7kF5fhAwLII23BmaOEgpWEmw34qg+JQhsYZI/+a4nq7k+cvCp4CwLf/KO9R7I0y9OzZx1FFhRf2mDPi+xLKux8L6h2wTs2oF5rc9AsaDauCwH9d08XcMwXXlHvIvowdDzjdAbMjYW68lYYdOrNB1Xh0wrahXh8+7AfnE/K2t4=
+  on:
+    branch: master
