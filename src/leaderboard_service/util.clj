@@ -2,6 +2,12 @@
   (:require [io.sarnowski.swagger1st.executor :as s1stexec]
             [clojure.string :as str]))
 
+(defn split
+  "clojure.string/split, but with nil punting."
+  [s re]
+  (if (nil? s)
+    nil
+    (str/split s re)))
 
 (defn operationId->func
   "Given a swagger request definition, resolves the operationId to the

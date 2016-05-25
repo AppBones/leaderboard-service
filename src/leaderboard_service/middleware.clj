@@ -1,7 +1,7 @@
 (ns leaderboard_service.middleware
   (:require [buddy.sign.jwe :as jwe]
             [ring.util.response :as resp]
-            [clojure.string :refer [split]]))
+            [leaderboard_service.middleware :refer :all]))
 
 (defn wrap-oauth [handler pubkey]
   "Execute the wrapped handler only if it contains a JWT verifiable with the
