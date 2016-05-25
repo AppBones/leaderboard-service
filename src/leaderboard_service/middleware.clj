@@ -8,7 +8,7 @@
   given key. Otherwise, return a 401 Unauthorized. When the token is good, stash
   it under key :jwt in the request."
   (fn [request]
-    (let [t (last (split (get-in request [:headers "Authorization"])))]
+    (let [t (last (split (get-in request [:headers "Authorization"]) " "))]
       (if (nil? t)
         {:status 401 :body "Unauthorized. No authentication provided."}
         (let [jwt (jwe/decrypt t pubkey {:alg :rsa-oaep-256
