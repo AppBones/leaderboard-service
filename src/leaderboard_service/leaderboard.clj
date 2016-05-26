@@ -81,11 +81,10 @@
           :available-media-types (get spec "produces")
           :post! #(post-leaderboard! % db-conn)
           :post-redirect? false
-          ;:exists? ;; TODO: Check if app_id exists (call App Profile service)
           :handle-created #(let [l (get-in % [:hal :href])]
                             (ring-response (:leaderboard %) {:headers {"Location" l}}))
           :handle-exception handle-exception
-          :handle-options #(describe-resource % spec)
+          :handle-options (describe-resource ctx "/")
           :handle-ok #(get-leaderboards % db-conn)
           :handle-not-found {:message "Leaderboard not found."})]
     (handler ctx)))
@@ -108,7 +107,7 @@
           :handle-created #(let [l (get-in % [:hal :href])]
                             (ring-response (:leaderboard %) {:headers {"Location" l}}))
           :handle-exception handle-exception
-          :handle-options #(describe-resource % spec)
+          :handle-options (describe-resource ctx "/{board_id}")
           :handle-ok :leaderboard
           :handle-not-found {:message "Leaderboard not found."})]
     (handler ctx)))

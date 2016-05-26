@@ -136,25 +136,8 @@ tramp
 # reftex files
 *.rel
 
-<<<<<<< HEAD
-### Leiningen ###
-pom.xml
-pom.xml.asc
-*jar
-/lib/
-/classes/
-/target/
-/checkouts/
-.lein-env
-.lein-deps-sum
-.lein-repl-history
-.lein-plugins/
-.lein-failures
-.nrepl-port
-=======
 # AUCTeX auto folder
 /auto/
->>>>>>> 15f260f... Service setup using the webservice-template. Liberator resources currently empty.
 
 # cask packages
 .cask/
