@@ -20,5 +20,7 @@
                        :uberjar-name "leaderboard-service.jar"
                        :aot :all}
              :dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.10"]]
+                   :dependencies [[org.clojure/tools.namespace "0.2.10"]
+                                  [ring/ring-mock "0.3.0"]
+                                  [midje "1.8.3"]]
                    :env {:is-dev "true"}}})
